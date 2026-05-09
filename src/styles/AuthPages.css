@@ -52,7 +52,6 @@
     border: 1px solid var(--border-default);
     border-radius: 24px;
     box-shadow: 0 20px 60px -10px rgba(0, 0, 0, 0.08);
-    /* Soft shadow */
     position: relative;
     z-index: 10;
 }
@@ -115,7 +114,6 @@
     background: white;
     color: var(--primary-600);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    /* Slight lift */
 }
 
 .auth-tabs__btn--active:hover {
@@ -255,4 +253,56 @@
     color: var(--gray-500);
     font-size: 13px;
     font-weight: 500;
+}
+
+/* =========================================
+   DARK MODE FIXES — LOGIN PAGE ONLY
+   ========================================= */
+
+html[data-theme="dark"] .auth-card {
+    background: #111827;
+    border-color: #374151;
+}
+
+html[data-theme="dark"] .auth-card__title {
+    color: #f9fafb;
+}
+
+html[data-theme="dark"] .auth-card__subtitle {
+    color: #cbd5e1;
+}
+
+html[data-theme="dark"] .auth-form__label {
+    color: #e5e7eb;
+}
+
+html[data-theme="dark"] .auth-form__forgot {
+    color: #cbd5e1;
+}
+
+html[data-theme="dark"] .auth-form__input {
+    background: #0f172a;
+    color: #f8fafc;
+    border-color: #334155;
+}
+
+html[data-theme="dark"] .auth-form__input::placeholder {
+    color: #94a3b8;
+}
+
+html[data-theme="dark"] .auth-form__input-icon {
+    color: #cbd5e1;
+}
+
+html[data-theme="dark"] .auth-form__toggle-pw {
+    color: #cbd5e1;
+}
+
+html[data-theme="dark"] .auth-card__footer {
+    border-color: #374151;
+    color: #cbd5e1;
+}
+
+html[data-theme="dark"] .auth-page__trust {
+    color: #e2e8f0;
 }
