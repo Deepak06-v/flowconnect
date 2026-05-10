@@ -1,0 +1,31 @@
+frontend:
+  - 'src/**'
+  - 'public/**'
+
+backend:
+  - 'flowconnect/**'
+  - 'backend/**'
+  - 'server/**'
+
+docs:
+  - 'README.md'
+  - 'docs/**'
+
+infra:
+  - '.github/**'
+  - 'Dockerfile'
+
+tests:
+  - 'test/**'
+  - 'tests/**'
+
+ui:
+  - 'src/components/**'
+
+api:
+  - 'src/api/**'
+
+misc:
+  - 'package.json'
+  - 'package-lock.json'
+  - 'pnpm-lock.yaml'
