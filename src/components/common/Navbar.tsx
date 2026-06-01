@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, Zap, Sun, Moon } from 'lucide-react'
@@ -11,6 +12,8 @@ const navLinks = [
     { label: 'How It Works', href: '/how-it-works', type: 'page' },
     { label: 'Integrations', href: '/#integrations', type: 'section' },
     { label: 'Pricing', href: '/pricing', type: 'page' },
+    { label: 'Solutions', href: '/solutions', type: 'page' },
+
 ]
 
 export default function Navbar() {
