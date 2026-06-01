@@ -64,6 +64,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import Navbar from "../components/common/Navbar";
 import { apiCall, getToken } from "../api/client";
 import { addPayment } from "../api/airtable";
 import { sendNotification, sendPaymentAlert } from "../api/discord";
@@ -2938,6 +2939,7 @@ function ResultDisplay({
 export default function BuilderPage() {
   return (
     <ReactFlowProvider>
+      <Navbar />
       <BuilderInner />
     </ReactFlowProvider>
   );

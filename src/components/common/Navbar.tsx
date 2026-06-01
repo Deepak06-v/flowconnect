@@ -1,17 +1,32 @@
 
 import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, Zap, Sun, Moon } from 'lucide-react'
-import { Link, useLocation } from 'react-router-dom'
+import { Menu, X, Zap, Sun, Moon, LogOut, Bell, LayoutDashboard, FolderKanban, Settings, UserCircle2 } from 'lucide-react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useTheme } from '../../context/ThemeContext'
+import { getToken, logout as clearAuth } from '../../api/client'
 import './Navbar.css'
 
-const navLinks = [
-    { label: 'About', href: '/about', type: 'page' },
+type NavLink = {
+    label: string
+    href: string
+    type: 'page' | 'section'
+}
+
+const publicNavLinks: NavLink[] = [
     { label: 'Features', href: '/#features', type: 'section' },
-    { label: 'How It Works', href: '/how-it-works', type: 'page' },
+    { label: 'Solutions', href: '/about#company', type: 'page' },
     { label: 'Integrations', href: '/#integrations', type: 'section' },
     { label: 'Pricing', href: '/pricing', type: 'page' },
+    { label: 'Documentation', href: '/how-it-works', type: 'page' },
+    { label: 'Contact', href: '/about#contact', type: 'page' },
+]
+
+const privateNavLinks: NavLink[] = [
+    { label: 'Dashboard', href: '/dashboard', type: 'page' },
+    { label: 'Workspace', href: '/builder', type: 'page' },
+    { label: 'Settings', href: '/profile', type: 'page' },
+    { label: 'Notifications', href: '/run-history', type: 'page' },
     { label: 'Solutions', href: '/solutions', type: 'page' },
 
 ]
@@ -22,8 +37,10 @@ export default function Navbar() {
     const mobileMenuRef = useRef<HTMLDivElement | null>(null)
     const { theme, toggleTheme } = useTheme()
     const location = useLocation()
+    const navigate = useNavigate()
+    const [isAuthenticated, setIsAuthenticated] = useState(() => !!getToken())
     const isHome = location.pathname === '/'
-    const isBuilder = location.pathname.startsWith('/builder')
+    const navLinks = isAuthenticated ? privateNavLinks : publicNavLinks
 
     useEffect(() => {
         const onScroll = () => setScrolled(window.scrollY > 20)
@@ -39,7 +56,10 @@ export default function Navbar() {
         }
     }, [mobileOpen])
 
-    if (isBuilder) return null
+    useEffect(() => {
+        setIsAuthenticated(!!getToken())
+        setMobileOpen(false)
+    }, [location.pathname, location.hash])
 
     const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string, type: string) => {
         setMobileOpen(false)
@@ -63,6 +83,19 @@ export default function Navbar() {
             // If not home, normal navigation to /#hash works via Link
         }
         // Pages (type === 'page') follow normal Link behavior
+    }
+
+    const handleLogout = () => {
+        clearAuth()
+        setIsAuthenticated(false)
+        setMobileOpen(false)
+        navigate('/login', { replace: true })
+    }
+
+    const getAvatarLabel = () => {
+        const storedUser = JSON.parse(localStorage.getItem('user') || 'null') as { full_name?: string; email?: string } | null
+        const source = storedUser?.full_name || storedUser?.email || 'U'
+        return source.slice(0, 1).toUpperCase()
     }
 
     return (
@@ -108,15 +141,56 @@ export default function Navbar() {
                         >
                             {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
                         </button>
-                        <Link to="/profile" className="nav-profile-btn" id="nav-profile">
-                            Profile
-                        </Link>
-                        <Link to="/login" className="navbar__link" id="nav-login">Log In</Link>
+                        {isAuthenticated ? (
+                            <>
+                                <Link
+                                    to="/profile"
+                                    className="navbar__link"
+                                    id="nav-profile"
+                                    aria-label="Profile"
+                                    style={{ gap: 8, paddingInline: 12 }}
+                                >
+                                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                                        <UserCircle2 size={18} />
+                                        <span
+                                            style={{
+                                                width: 28,
+                                                height: 28,
+                                                borderRadius: '999px',
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                background: 'var(--gradient-primary)',
+                                                color: 'white',
+                                                fontWeight: 700,
+                                                fontSize: 12,
+                                            }}
+                                        >
+                                            {getAvatarLabel()}
+                                        </span>
+                                    </span>
+                                </Link>
+                                <button
+                                    type="button"
+                                    className="navbar__link"
+                                    id="nav-logout"
+                                    onClick={handleLogout}
+                                    style={{ border: 'none', background: 'transparent', gap: 8 }}
+                                >
+                                    <LogOut size={18} />
+                                    Logout
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                <Link to="/login" className="navbar__link" id="nav-login">Login</Link>
+                                <Link to="/signup" className="btn-primary navbar__cta" id="nav-get-started">
+                                    <Zap size={16} />
+                                    Sign Up
+                                </Link>
+                            </>
+                        )}
                     </div>
-                    <Link to="/signup" className="btn-primary navbar__cta" id="nav-get-started">
-                        <Zap size={16} />
-                        Get Started
-                    </Link>
                 </div>
 
                 {/* Mobile Toggle */}
@@ -154,12 +228,46 @@ export default function Navbar() {
                             </Link>
                         ))}
                         <div className="navbar__mobile-actions">
-                            <Link to="/profile" className="btn-secondary  navbar__full-width"  onClick={() => setMobileOpen(false)}>Profile</Link>
-                            <Link to="/login" className="btn-secondary  navbar__full-width"  onClick={() => setMobileOpen(false)}>Log In</Link>
-                            <Link to="/signup" className="btn-primary  navbar__full-width"  onClick={() => setMobileOpen(false)}>
-                                <Zap size={16} />
-                                Get Started
-                            </Link>
+                            <button
+                                type="button"
+                                onClick={toggleTheme}
+                                className="btn-secondary navbar__full-width"
+                            >
+                                {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+                                Toggle theme
+                            </button>
+                            {isAuthenticated ? (
+                                <>
+                                    <Link to="/dashboard" className="btn-secondary navbar__full-width" onClick={() => setMobileOpen(false)}>
+                                        <LayoutDashboard size={16} />
+                                        Dashboard
+                                    </Link>
+                                    <Link to="/builder" className="btn-secondary navbar__full-width" onClick={() => setMobileOpen(false)}>
+                                        <FolderKanban size={16} />
+                                        Workspace
+                                    </Link>
+                                    <Link to="/profile" className="btn-secondary navbar__full-width" onClick={() => setMobileOpen(false)}>
+                                        <Settings size={16} />
+                                        Settings
+                                    </Link>
+                                    <Link to="/run-history" className="btn-secondary navbar__full-width" onClick={() => setMobileOpen(false)}>
+                                        <Bell size={16} />
+                                        Notifications
+                                    </Link>
+                                    <button type="button" className="btn-primary navbar__full-width" onClick={handleLogout}>
+                                        <LogOut size={16} />
+                                        Logout
+                                    </button>
+                                </>
+                            ) : (
+                                <>
+                                    <Link to="/login" className="btn-secondary navbar__full-width" onClick={() => setMobileOpen(false)}>Login</Link>
+                                    <Link to="/signup" className="btn-primary navbar__full-width" onClick={() => setMobileOpen(false)}>
+                                        <Zap size={16} />
+                                        Sign Up
+                                    </Link>
+                                </>
+                            )}
                         </div>
                     </motion.div>
                 )}

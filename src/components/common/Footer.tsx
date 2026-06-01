@@ -1,34 +1,37 @@
-import { Zap, Github, Twitter, MessageCircle } from 'lucide-react'
+import { Zap, Github, Twitter, MessageCircle, Linkedin, Mail } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import './Footer.css'
 
 const footerLinks = {
-    Product: [
+    'Product Links': [
         { label: 'Features', href: '/#features', type: 'section' },
-        { label: 'Integrations', href: '/#integrations', type: 'section' },
         { label: 'Pricing', href: '/pricing', type: 'page' },
-        { label: 'How It Works', href: '/how-it-works', type: 'page' },
-        { label: 'Get Started', href: '/signup', type: 'page' },
+        { label: 'Integrations', href: '/#integrations', type: 'section' },
+        { label: 'Documentation', href: '/how-it-works', type: 'page' },
     ],
-    Solutions: [
-        { label: 'E-commerce', href: '/builder', type: 'page' },
-        { label: 'Fintech', href: '/builder', type: 'page' },
-        { label: 'Real Estate', href: '/builder', type: 'page' },
-        { label: 'Logistics', href: '/builder', type: 'page' },
-        { label: 'Marketing', href: '/builder', type: 'page' },
+    'Solutions Links': [
+        { label: 'E-commerce', href: '/about#company', type: 'page' },
+        { label: 'Fintech', href: '/about#company', type: 'page' },
+        { label: 'Operations', href: '/about#company', type: 'page' },
+        { label: 'Support', href: '/about#company', type: 'page' },
     ],
-    Company: [
-        { label: 'About', href: '/about', type: 'page' },
+    Resources: [
         { label: 'Blog', href: '/about#blog', type: 'page' },
-        { label: 'Careers', href: '/about#company', type: 'page' },
-        { label: 'Press Kit', href: '/about#resources', type: 'page' },
-        { label: 'Contact', href: '/about#contact', type: 'page' },
+        { label: 'Documentation', href: '/how-it-works', type: 'page' },
+        { label: 'Privacy', href: '/privacy', type: 'page' },
+        { label: 'Terms', href: '/terms', type: 'page' },
     ],
-    Legal: [
-        { label: 'Privacy Policy', href: '/privacy', type: 'page' },
-        { label: 'Terms of Service', href: '/terms', type: 'page' },
-        { label: 'Cookie Policy', href: '/privacy', type: 'page' },
-        { label: 'GDPR', href: '/privacy', type: 'page' },
+    'Company Links': [
+        { label: 'About', href: '/about', type: 'page' },
+        { label: 'Contact', href: '/about#contact', type: 'page' },
+        { label: 'Careers', href: '/about#resources', type: 'page' },
+        { label: 'Security', href: '/privacy', type: 'page' },
+    ],
+    'Social Links': [
+        { label: 'GitHub', href: '/about#resources', type: 'page' },
+        { label: 'X', href: '/about#blog', type: 'page' },
+        { label: 'LinkedIn', href: '/about#company', type: 'page' },
+        { label: 'Email', href: '/about#contact', type: 'page' },
     ],
 }
 
@@ -55,10 +58,6 @@ export default function Footer() {
         })
     }
 
-    const handleSocialClick = (target: string) => {
-        navigate(target)
-    }
-
     return (
         <footer className="footer" id="footer">
             <div className="container">
@@ -74,7 +73,7 @@ export default function Footer() {
                             </span>
                         </Link>
                         <p className="footer__brand-desc">
-                            Pravah helps you automate business workflows 
+                            Pravah helps you automate business workflows
                             across WhatsApp, Razorpay, Zoho, and 500+ Indian apps.
                         </p>
                         <div className="footer__socials">
@@ -83,27 +82,45 @@ export default function Footer() {
                                 className="footer__social"
                                 aria-label="GitHub"
                                 id="footer-github"
-                                onClick={() => handleSocialClick('/about#resources')}
+                                onClick={() => navigate('/about#resources')}
                             >
                                 <Github size={18} />
                             </button>
                             <button
                                 type="button"
                                 className="footer__social"
-                                aria-label="Twitter"
+                                aria-label="X"
                                 id="footer-twitter"
-                                onClick={() => handleSocialClick('/about#blog')}
+                                onClick={() => navigate('/about#blog')}
                             >
                                 <Twitter size={18} />
                             </button>
                             <button
                                 type="button"
                                 className="footer__social"
-                                aria-label="Discord"
-                                id="footer-discord"
-                                onClick={() => handleSocialClick('/about#contact')}
+                                aria-label="LinkedIn"
+                                id="footer-linkedin"
+                                onClick={() => navigate('/about#company')}
+                            >
+                                <Linkedin size={18} />
+                            </button>
+                            <button
+                                type="button"
+                                className="footer__social"
+                                aria-label="Contact"
+                                id="footer-contact"
+                                onClick={() => navigate('/about#contact')}
                             >
                                 <MessageCircle size={18} />
+                            </button>
+                            <button
+                                type="button"
+                                className="footer__social"
+                                aria-label="Email"
+                                id="footer-email"
+                                onClick={() => window.location.assign('mailto:hello@pravah.app')}
+                            >
+                                <Mail size={18} />
                             </button>
                         </div>
                     </div>
