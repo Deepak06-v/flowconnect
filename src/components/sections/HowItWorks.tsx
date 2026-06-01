@@ -7,7 +7,7 @@ const steps = [
         number: '01',
         icon: MousePointerClick,
         title: 'Select Your Trigger',
-        description: 'Choose from 500+ Indian apps like Razorpay, WhatsApp, or SMS. No coding required.',
+        description: 'Choose from 500+ Indian apps like Razorpay, WhatsApp, or SMS — no coding required.',
         color: 'cyan',
     },
     {
@@ -53,22 +53,26 @@ export default function HowItWorks() {
                     </h2>
                     <p className="section-subtitle">
                         Building workflows for your Indian business has never been easier. 
-                        Four simple steps to unlimited productivity.
+                        Four simple steps to automate your business workflows.
                     </p>
                 </motion.div>
 
-                <div className="how-it-works__steps">
+                <div className="how-it-works__steps" role="list">
                     {steps.map((step, i) => {
                         const Icon = step.icon
                         return (
                             <motion.div
-                                key={i}
-                                initial={{ opacity: 0, x: i % 2 === 0 ? -40 : 40 }}
+                                key={step.number}
+                                initial={{ opacity: 0, x: i % 2 === 0 ? -25 : 25 }}
                                 whileInView={{ opacity: 1, x: 0 }}
                                 viewport={{ once: true, margin: '-80px' }}
                                 transition={{ duration: 0.6, delay: i * 0.15 }}
                             >
-                                <div className={`how-it-works__step`} id={`step-${i}`}>
+                                <div
+                                    className="how-it-works__step"
+                                    id={`step-${i}`}
+                                    role="listitem"
+                                >
                                     <div className={`how-it-works__step-number how-it-works__step-number--${step.color}`}>
                                         {step.number}
                                     </div>
@@ -81,7 +85,7 @@ export default function HowItWorks() {
                                     </div>
                                 </div>
                                 {i < steps.length - 1 && (
-                                    <div className="how-it-works__connector">
+                                    <div className="how-it-works__connector" aria-hidden="true">
                                         <div className="how-it-works__connector-line" />
                                         <ArrowDown size={16} className="how-it-works__connector-arrow" />
                                     </div>

@@ -64,8 +64,8 @@ const features = [
     },
     {
         icon: Zap,
-        title: 'Instant Playbooks',
-        description: 'Use pre-built templates for common Indian business scenarios like E-commerce and Logistics.',
+        title: 'Workflow Templates',
+        description: 'Launch common Indian business automations in minutes with ready-made workflows for payments, customer alerts, and data syncing.',
         color: 'amber',
     },
 ]
@@ -85,12 +85,12 @@ const itemVariants = {
         opacity: 1,
         y: 0,
         scale: 1,
-        transition: { duration: 0.5, ease: 'easeOut' },
+        transition: { duration: 0.5 },
     },
 }
 
 export default function Features() {
-    const ref = useRef(null)
+    const ref = useRef<HTMLDivElement | null>(null)
     const isInView = useInView(ref, { once: true, margin: '-100px' })
 
     return (
@@ -115,14 +115,14 @@ export default function Features() {
                     </h2>
 
                     <p className="section-subtitle">
-                        Connect your favorite Indian apps and services to create powerful,
-                        automated business systems in minutes.
+                        Connect popular Indian apps and services to build powerful automated workflows in minutes — without coding.
                     </p>
                 </motion.div>
 
                 {/* Grid */}
                 <motion.div
                     className="features__grid"
+                    role="list"
                     ref={ref}
                     variants={containerVariants}
                     initial="hidden"
@@ -133,19 +133,21 @@ export default function Features() {
 
                         return (
                             <motion.div
-                                key={i}
+                                key={feature.title}
                                 className="features__card glass-card"
+                                role="listitem"
                                 variants={itemVariants}
                                 id={`feature-card-${i}`}
                                 whileHover={{
-                                    y: -10,
-                                    scale: 1.04,
+                                    y: -6,
+                                    scale: 1.02,
                                 }}
                                 transition={{ type: 'spring', stiffness: 200, damping: 15 }}
                             >
                                 {/* Icon */}
                                 <motion.div
                                     className={`features__card-icon features__card-icon--${feature.color}`}
+                                    aria-label={feature.title + " icon"}
                                     whileHover={{ rotate: 8, scale: 1.1 }}
                                     transition={{ type: 'spring', stiffness: 250 }}
                                 >

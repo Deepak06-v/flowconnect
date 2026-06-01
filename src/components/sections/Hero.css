@@ -108,6 +108,25 @@
     border-radius: 20px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.08);
 }
+.hero__trust-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(180px, 1fr));
+    gap: 16px;
+    justify-items: center;
+    margin-top: 24px;
+    width: 100%;
+    max-width: 920px;
+    text-align: center;
+}
+.hero__trust-pill {
+    background: rgba(15,23,42,0.04);
+    border: 1px solid rgba(15,23,42,0.08);
+    border-radius: 999px;
+    padding: 14px 18px;
+    font-size: 14px;
+    color: #475569;
+    font-weight: 600;
+}
 .hero__stat-value {
     font-size: 32px;
     font-weight: 800;

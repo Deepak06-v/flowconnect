@@ -36,7 +36,7 @@ export default function Hero() {
                     Automate Your <br />
                     <span className="gradient-text">Business Workflows</span>
                     <br />
-                    In Minutes
+                    In Seconds
                 </motion.h1>
 
                 {/* Subtitle */}
@@ -46,9 +46,9 @@ export default function Hero() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.7, delay: 0.2 }}
                 >
-                    Connect WhatsApp, Razorpay, Zoho, and 500+ Indian apps into powerful
-                    automated workflows. Save hours of manual work every day with
-                    Pravah.
+                    Connect WhatsApp, Razorpay, Zoho, and 500+ Indian services into powerful
+                    automated workflows. Launch business automations in minutes with zero code,
+                    no engineering support needed.
                 </motion.p>
 
                 {/* CTA */}
@@ -58,14 +58,29 @@ export default function Hero() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.7, delay: 0.3 }}
                 >
-                    <Link to="/builder" className="btn-primary hero__btn hero__btn--glow" id="hero-cta-start">
+                    <Link
+                        to="/builder"
+                        className="btn-primary hero__btn hero__btn--glow"
+                        aria-label="Start building automation workflows for free"
+                    >
                         <Zap size={18} className="hero__btn-icon" />
-                        Start Automating Free
+                        Get Started Free
                         <ArrowRight size={18} />
                     </Link>
                     <a href="#how-it-works" className="btn-secondary hero__btn" id="hero-cta-learn">
-                        Watch Demo
+                        Explore How It Works
                     </a>
+                </motion.div>
+
+                <motion.div
+                    className="hero__trust-row"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.7, delay: 0.35 }}
+                >
+                    <div className="hero__trust-pill">Trusted by 700+ Indian operations teams</div>
+                    <div className="hero__trust-pill">4.9/5 average builder rating</div>
+                    <div className="hero__trust-pill">Pre-built templates for payments, CRM, and notifications</div>
                 </motion.div>
 
                 {/* Stats Row */}
@@ -91,7 +106,7 @@ export default function Hero() {
                     </div>
                     <div className="hero__stat-divider" />
                     <div className="hero__stat">
-                        <div className="hero__stat-value gradient-text">0</div>
+                        <div className="hero__stat-value gradient-text">Zero</div>
                         <div className="hero__stat-label">Coding Required</div>
                     </div>
                 </motion.div>
@@ -132,7 +147,7 @@ export default function Hero() {
                                 </div>
                                 <div>
                                     <div className="hero__wf-node-title">Google Sheets</div>
-                                    <div className="hero__wf-node-desc">Add customer details to row</div>
+                                    <div className="hero__wf-node-desc">Add customer details to spreadsheet row</div>
                                 </div>
                             </div>
                             <div className="hero__wf-connector">
@@ -146,7 +161,7 @@ export default function Hero() {
                                 </div>
                                 <div>
                                     <div className="hero__wf-node-title">WhatsApp Business</div>
-                                    <div className="hero__wf-desc">Send confirmation message</div>
+                                    <div className="hero__wf-node-desc">Send WhatsApp confirmation message</div>
                                 </div>
                             </div>
                         </div>

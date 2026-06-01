@@ -60,12 +60,11 @@ export default function Integrations() {
                     </h2>
 
                     <p className="section-subtitle">
-                        From Indian payment gateways to global CRM tools —
-                        Pravah bridges the gap between your favorite apps.
+                        From Indian payment gateways to global productivity tools — Pravah connects all your favorite apps seamlessly.
                     </p>
                 </motion.div>
 
-                <div className="integrations__content" ref={ref}>
+                <div className="integrations__content" role="list" ref={ref}>
 
                     {/* Indian Apps */}
                     <motion.div
@@ -76,25 +75,27 @@ export default function Integrations() {
                     >
                         <h3 className="integrations__section-title">
                             <span className="integrations__section-dot integrations__section-dot--orange" />
-                            Popular Indian Apps
+                            Popular Indian Integrations
                         </h3>
 
-                        <div className="integrations__chains">
+                        <div className="integrations__chains" role="list">
                             {indianApps.map((app, i) => (
                                 <motion.div
-                                    key={app.name}
+                                    key={app.name + i}
                                     className="integrations__chain-card glass-card"
+                                    role="listitem"
                                     initial={{ opacity: 0, scale: 0.9 }}
                                     animate={isInView ? { opacity: 1, scale: 1 } : {}}
                                     transition={{ duration: 0.4, delay: i * 0.06 }}
                                     whileHover={{
-                                        y: -8,
-                                        scale: 1.05,
+                                        y: -6,
+                                        scale: 1.03,
                                     }}
                                 >
                                     {/* Avatar */}
                                     <motion.div
                                         className="integrations__chain-avatar"
+                                        aria-label={`${app.name} logo`}
                                         style={{
                                             background: `${app.color}22`,
                                             color: app.color,

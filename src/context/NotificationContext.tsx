@@ -5,7 +5,7 @@ import { fetchNotifications } from "../api/notificationApi";
 export const NotificationContext = createContext<any>(null);
 
 export const NotificationProvider = ({ children }: any) => {
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState<any[]>([]);
   const userId = "USER_ID"; // replace with auth
 
   useEffect(() => {

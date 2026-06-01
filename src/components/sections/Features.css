@@ -178,3 +178,8 @@
 .features__card:hover .features__card-glow {
     opacity: 0.25;
 }
+@media (max-width: 768px) {
+  .features__grid {
+    grid-template-columns: 1fr;
+  }
+}
