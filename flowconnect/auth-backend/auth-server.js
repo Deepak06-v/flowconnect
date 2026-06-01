@@ -708,7 +708,35 @@ app.post("/api/auth/register", async (req, res) => {
   });
 });
 
-app.post("/api/auth/login", async (req, res) => {
+// Brute-force protection for the login endpoint.
+// Tracks failed attempts per IP address. After LOGIN_MAX_ATTEMPTS consecutive
+// failures within LOGIN_WINDOW_MS the IP is locked out for LOGIN_LOCKOUT_MS.
+const loginAttempts = new Map();
+const LOGIN_MAX_ATTEMPTS = 10;
+const LOGIN_WINDOW_MS = 15 * 60 * 1000;
+const LOGIN_LOCKOUT_MS = 15 * 60 * 1000;
+
+function loginRateLimiter(req, res, next) {
+  const forwarded = req.headers["x-forwarded-for"];
+  const ip = (Array.isArray(forwarded) ? forwarded[0] : String(forwarded || "").split(",")[0])?.trim() || req.ip || "unknown";
+  const now = Date.now();
+  const entry = loginAttempts.get(ip);
+
+  if (entry) {
+    if (entry.lockedUntil && now < entry.lockedUntil) {
+      const retryAfter = Math.ceil((entry.lockedUntil - now) / 1000);
+      res.set("Retry-After", String(retryAfter));
+      return res.status(429).json({ detail: "Too many failed login attempts. Try again later." });
+    }
+    if (now - entry.windowStart >= LOGIN_WINDOW_MS) {
+      loginAttempts.delete(ip);
+    }
+  }
+  req._loginIp = ip;
+  return next();
+}
+
+app.post("/api/auth/login", loginRateLimiter, async (req, res) => {
   const email = String(req.body.username || req.body.email || "").trim().toLowerCase();
   const password = String(req.body.password || "");
 
@@ -719,14 +747,23 @@ app.post("/api/auth/login", async (req, res) => {
   const users = await readUsers();
   const user = users.find((item) => item.email === email);
 
-  if (!user) {
+  const valid = user ? await bcrypt.compare(password, user.password_hash) : false;
+
+  if (!user || !valid) {
+    // Record the failed attempt for the originating IP.
+    const ip = req._loginIp || "unknown";
+    const now = Date.now();
+    const entry = loginAttempts.get(ip) || { count: 0, windowStart: now };
+    entry.count += 1;
+    if (entry.count >= LOGIN_MAX_ATTEMPTS) {
+      entry.lockedUntil = now + LOGIN_LOCKOUT_MS;
+    }
+    loginAttempts.set(ip, entry);
     return res.status(401).json({ detail: "Invalid credentials" });
   }
 
-  const valid = await bcrypt.compare(password, user.password_hash);
-  if (!valid) {
-    return res.status(401).json({ detail: "Invalid credentials" });
-  }
+  // Successful login: clear any recorded failed attempts for this IP.
+  if (req._loginIp) loginAttempts.delete(req._loginIp);
 
   const access_token = createToken(user);
   return res.json({
