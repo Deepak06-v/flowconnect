@@ -70,8 +70,21 @@ const GOOGLE_OAUTH_SCOPES = [
 const googleOauthStateCache = new Map();
 let googlePollingInProgress = false;
 
+const CORS_ORIGIN = process.env.CORS_ORIGIN || "";
+const corsOrigins = CORS_ORIGIN
+  ? CORS_ORIGIN.split(",").map((o) => o.trim()).filter(Boolean)
+  : [];
+
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    // Restrict to explicit origins from the environment variable.
+    // cors() with no arguments defaults to Access-Control-Allow-Origin: *
+    // which allows any website to make requests to this server.
+    origin: corsOrigins.length > 0 ? corsOrigins : false,
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
