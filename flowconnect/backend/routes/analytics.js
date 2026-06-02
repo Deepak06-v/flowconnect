@@ -1,5 +1,6 @@
 const express = require('express');
 const { Pool } = require('pg');
+const { authenticateUser } = require('../middleware/auth');
 const router = express.Router();
 
 // PostgreSQL connection pool
@@ -11,7 +12,7 @@ const pool = new Pool({
   port: process.env.DB_PORT || 5432,
 });
 
-router.get('/analytics', async (req, res) => {
+router.get('/analytics', authenticateUser, async (req, res) => {
   try {
     const { dateRange = '30days' } = req.query;
     
