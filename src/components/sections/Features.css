@@ -284,6 +284,15 @@
   background: var(--rose-soft);
 }
 
+
+.features__card:hover .features__card-glow {
+    opacity: 0.25;
+}
+@media (max-width: 768px) {
+  .features__grid {
+    grid-template-columns: 1fr;
+  }
+
 .features__card-glow--cyan {
   background: var(--cyan-soft);
 }
@@ -296,9 +305,9 @@
   background: var(--primary-50);
 }
 
-/* =========================
-   RESPONSIVE
-========================= */
+
+  
+
 @media (max-width: 768px) {
   .features__grid {
     margin-top: 36px;
@@ -353,13 +362,12 @@
   }
 }
 
-/* =========================
-   DARK MODE TUNING
-========================= */
+
 [data-theme='dark'] .features__tab--active {
   background: var(--bg-secondary);
 }
 
 [data-theme='dark'] .features__card:hover {
   background: var(--bg-hover);
+
 }

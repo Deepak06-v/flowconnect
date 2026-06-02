@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { Zap, ArrowRight } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import './CTA.css'
 
 export default function CTA() {
@@ -29,14 +30,14 @@ export default function CTA() {
                             daily operations. Free to start, no credit card required.
                         </p>
                         <div className="cta__actions">
-                            <a href="#" className="btn-primary cta__btn" id="cta-start-btn">
+                            <Link to="/builder" className="btn-primary cta__btn" id="cta-start-btn">
                                 <Zap size={18} />
                                 Start Building Free
                                 <ArrowRight size={18} />
-                            </a>
-                            <a href="#" className="btn-secondary cta__btn" id="cta-docs-btn">
+                            </Link>
+                            <Link to="/pricing" className="btn-secondary cta__btn" id="cta-docs-btn">
                                 Talk to Expert
-                            </a>
+                            </Link>
                         </div>
                         <div className="cta__trust">
                             <div className="cta__trust-item">

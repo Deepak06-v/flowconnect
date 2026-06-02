@@ -172,7 +172,7 @@ export default function Pricing() {
         >
           <div className="section-badge">
             <Zap size={14} />
-            Pricing
+            Simple Pricing
           </div>
 
           <h2 className="section-title">
@@ -180,7 +180,11 @@ export default function Pricing() {
           </h2>
 
           <p className="section-subtitle">
+
+            Pricing designed for Bharat. No hidden charges. Upgrade or cancel anytime — full flexibility for your business.
+
             Transparent pricing designed for Bharat. Start free, scale when ready, and save more on yearly billing.
+
           </p>
         </motion.div>
 
@@ -214,7 +218,11 @@ export default function Pricing() {
         </motion.div>
 
         {/* GRID */}
+
+        <div className="pricing__grid" role="list">
+
         <motion.div className="pricing__grid" initial="hidden" whileInView="visible" viewport={{ once: true }}>
+
           {plans.map((plan, i) => {
             const Icon = plan.icon
             const displayPrice = getDisplayPrice(plan)
@@ -223,10 +231,18 @@ export default function Pricing() {
               <motion.div
                 key={plan.id}
                 className={`pricing__card ${plan.popular ? 'pricing__card--popular' : ''}`}
+
+                role="listitem"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+
                 custom={i}
                 variants={cardVariants}
                 whileHover={{ y: -4 }}
                 transition={{ type: 'spring', stiffness: 240, damping: 20 }}
+
               >
                 <div className={`pricing__card-line pricing__card-line--${plan.color}`} />
 
@@ -260,7 +276,7 @@ export default function Pricing() {
 
                 <ul className="pricing__card-features">
                   {plan.features.map((feature) => (
-                    <li key={feature} className="pricing__card-feature">
+                    <li key={plan.id + feature} className="pricing__card-feature">
                       <Check size={16} className={`pricing__check-icon pricing__check-icon--${plan.color}`} />
                       {feature}
                     </li>
@@ -268,10 +284,17 @@ export default function Pricing() {
                 </ul>
 
                 <button
+
+                      className={plan.popular ? 'btn-primary pricing__card-btn' : 'btn-secondary pricing__card-btn'}
+                      onClick={() => handlePlanClick(plan.id)}>
+
+                      Start Free Trial
+
                   className={plan.popular ? 'btn-primary pricing__card-btn' : 'btn-secondary pricing__card-btn'}
                   onClick={() => handlePlanClick(plan.id)}
                 >
                   {plan.ctaLabel}
+
                 </button>
 
               </motion.div>
@@ -409,7 +432,11 @@ export default function Pricing() {
           <Zap size={16} />
           <span>
             Secure payments via <strong>UPI</strong>, <strong>Net Banking</strong>, or <strong>Cards</strong>.
+
+            Save up to 20% with annual billing.
+
             {billingCycle === 'yearly' ? ` You are saving about ₹${annualSavings.toLocaleString()} across all yearly plans.` : ' Save 20% on annual billing.'}
+
           </span>
         </motion.div>
 

@@ -13,10 +13,9 @@ export default function LearnAutomation() {
         return () => clearInterval(timer)
     }, [])
 
-    const nextStep = () => {
-        if (step < 3) setStep(step + 1)
-        else setStep(0)
-    }
+const nextStep = () => {
+    setStep((prev) => (prev < 3 ? prev + 1 : 0))
+}
 
     return (
         <section className="learn-automation section" id="learn-automation">
@@ -35,14 +34,14 @@ export default function LearnAutomation() {
                         Build Your First <span className="gradient-text">Workflow</span>
                     </h2>
                     <p className="section-subtitle">
-                        See how easy it is to automate your business. Try this interactive simulator.
+                        See how easy it is to automate your business workflows with this interactive simulator.
                     </p>
                 </motion.div>
 
                 <div className="learn-demo">
                     {/* Sidebar Instructions */}
-                    <div className="learn-demo__sidebar">
-                        <AnimatePresence mode="wait">
+                    <div className="learn-demo__sidebar" role="region" aria-label="Interactive workflow steps">
+                        <AnimatePresence mode="wait" initial={false}>
                             {step === 0 && (
                                 <motion.div
                                     key="step0"
@@ -50,17 +49,21 @@ export default function LearnAutomation() {
                                     animate={{ opacity: 1, x: 0 }}
                                     exit={{ opacity: 0, x: -20 }}
                                 >
-                                    <div className="learn-demo__step-badge">Step 1: Initiation</div>
+                                    <div className="learn-demo__step-badge">Step 1: Trigger Setup</div>
                                     <h3 className="learn-demo__title">Start a New Workflow</h3>
                                     <p className="learn-demo__desc">
                                         Every automation begins with a <strong>Trigger</strong>. This tells Pravah when to run.
                                     </p>
                                     <div className="learn-demo__options">
-                                        <button className="learn-demo__btn" onClick={nextStep}>
+                                        <button
+                                                className="learn-demo__btn"
+                                                onClick={nextStep}
+                                                aria-label="Proceed to next step">
+
                                             <Clock size={20} />
                                             Schedule (Every 24h)
                                         </button>
-                                        <button className="learn-demo__btn" onClick={nextStep}>
+                                        <button className="learn-demo__btn" onClick={nextStep} aria-label="Proceed to next step">
                                             <Zap size={20} />
                                             Razorpay Payment
                                         </button>
@@ -77,10 +80,10 @@ export default function LearnAutomation() {
                                     <div className="learn-demo__step-badge">Step 2: Execution</div>
                                     <h3 className="learn-demo__title">Add an Action</h3>
                                     <p className="learn-demo__desc">
-                                        What should happen when the trigger fires? Let's send a WhatsApp message.
+                                        What should happen when the trigger fires? Let's send a WhatsApp notification message.
                                     </p>
                                     <div className="learn-demo__options">
-                                        <button className="learn-demo__btn" onClick={nextStep}>
+                                        <button className="learn-demo__btn" onClick={nextStep} aria-label="Proceed to next step">
                                             <MessageSquare size={20} />
                                             Send WhatsApp Notification
                                         </button>
@@ -97,10 +100,10 @@ export default function LearnAutomation() {
                                     <div className="learn-demo__step-badge">Step 3: Deployment</div>
                                     <h3 className="learn-demo__title">Deploy & Run</h3>
                                     <p className="learn-demo__desc">
-                                        Your logica workflow is ready. Deploy it to Pravah.
+                                        Your logical workflow is ready. Deploy it to Pravah.
                                     </p>
                                     <div className="learn-demo__options">
-                                        <button className="learn-demo__btn" onClick={nextStep}>
+                                        <button className="learn-demo__btn" onClick={nextStep} aria-label="Proceed to next step">
                                             <Play size={20} />
                                             Deploy Workflow
                                         </button>
@@ -122,9 +125,9 @@ export default function LearnAutomation() {
                                         Success! Your workflow is now running. It will execute automatically based on your trigger.
                                     </p>
                                     <div className="learn-demo__options">
-                                        <button className="learn-demo__btn" onClick={() => setStep(0)}>
+                                        <button className="learn-demo__btn" onClick={() => setStep(0)} aria-label="Build another workflow">
                                             <ArrowRight size={20} />
-                                            Build Another
+                                            Build Another Workflow
                                         </button>
                                     </div>
                                 </motion.div>
@@ -140,6 +143,8 @@ export default function LearnAutomation() {
                                     initial={{ opacity: 0, y: 20, scale: 0.9 }}
                                     animate={{ opacity: 1, y: 0, scale: 1 }}
                                     className="learn-node learn-node--trigger"
+                                    role="article"
+                                aria-label="Workflow trigger node"
                                 >
                                     <div className="learn-node__icon">
                                         <Zap size={20} />

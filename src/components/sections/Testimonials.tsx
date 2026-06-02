@@ -31,14 +31,13 @@ const testimonials = [
 
 const cardVariants = {
     hidden: { opacity: 0, y: 40 },
-    visible: (i) => ({
+    visible: (i: number) => ({
         opacity: 1,
         y: 0,
         transition: {
             delay: i * 0.12,
             duration: 0.5,
-            ease: 'easeOut'
-        }
+        },
     })
 }
 
@@ -65,46 +64,49 @@ export default function Testimonials() {
                     </h2>
 
                     <p className="section-subtitle">
-                        From solo founders to growing teams, Pravah powers reliable automation workflows.
+                        From solo founders to growing teams, Pravah powers reliable and scalable automation workflows.
                     </p>
                 </motion.div>
 
                 {/* Grid */}
-                <div className="testimonials__grid">
+                <div className="testimonials__grid" role="list">
                     {testimonials.map((t, i) => (
                         <motion.div
-                            key={i}
+                            key={t.name}
                             className={`testimonials__card glass-card ${i === 1 ? 'featured' : ''}`}
+                            role="listitem"
                             custom={i}
                             initial="hidden"
                             whileInView="visible"
                             viewport={{ once: true }}
                             variants={cardVariants}
-                            whileHover={{ y: -8, scale: 1.02 }}
+                            whileHover={{ y: -6, scale: 1.01 }}
                         >
                             {/* Quote Icon */}
-                            <div className="testimonials__quote-icon">
+                            <div className="testimonials__quote-icon" aria-hidden="true">
                                 <Quote size={22} />
                             </div>
 
                             {/* Stars */}
-                            <div className="testimonials__stars">
+                            <div className="testimonials__stars" aria-label={`Rating: ${t.rating} out of 5 stars`}>
                                 {Array.from({ length: 5 }).map((_, si) => (
                                     <Star
                                         key={si}
                                         size={14}
-                                        fill={si < t.rating ? "var(--warning-400)" : "transparent"}
+                                        fill={si < (t.rating ?? 0) ? "var(--warning-400)" : "transparent"}
                                         color="var(--warning-400)"
                                     />
                                 ))}
                             </div>
 
                             {/* Text */}
-                            <p className="testimonials__text">“{t.text}”</p>
+                            <p className="testimonials__text" aria-label={`Testimonial from ${t.name}`}>
+                                “{t.text}”
+                            </p>
 
                             {/* Author */}
                             <div className="testimonials__author">
-                                <div className={`testimonials__avatar avatar-${i}`}>
+                                <div className={`testimonials__avatar avatar-${i}`} aria-hidden="true">
                                     {t.name.split(' ').map(n => n[0]).join('')}
                                 </div>
 
