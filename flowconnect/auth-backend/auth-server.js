@@ -18,7 +18,21 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const PORT = Number(process.env.AUTH_PORT || 3000);
-const JWT_SECRET = process.env.JWT_SECRET || "dev-secret-change-me";
+if (!process.env.JWT_SECRET) {
+  if (process.env.NODE_ENV === "production") {
+    console.error(
+      "FATAL: JWT_SECRET environment variable is not set. " +
+      "Set it to a cryptographically random string of at least 32 characters " +
+      "before starting the server."
+    );
+    process.exit(1);
+  }
+  console.warn(
+    "WARNING: JWT_SECRET is not set. Using an insecure placeholder. " +
+    "Set JWT_SECRET before deploying."
+  );
+}
+const JWT_SECRET = process.env.JWT_SECRET || "dev-secret-local-only-do-not-deploy";
 const USERS_FILE = path.resolve(
   process.cwd(),
   process.env.AUTH_USERS_FILE || "flowconnect/auth-backend/users.json"
