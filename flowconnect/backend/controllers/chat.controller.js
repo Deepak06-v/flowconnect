@@ -30,9 +30,16 @@ const getMessages = async (req, res) => {
       .sort({ createdAt: -1 })
       .limit(limit);
 
+    // nextCursor is the oldest message ID in this page. Pass it as `before`
+    // on the next request to continue paginating backwards through history.
+    const nextCursor = messages.length === limit
+      ? messages[messages.length - 1]._id
+      : null;
+
     res.json({
       messages,
       hasMore: messages.length === limit,
+      nextCursor,
     });
   } catch (err) {
     console.error("Error fetching messages:", err);
