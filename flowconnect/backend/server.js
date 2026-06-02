@@ -5,6 +5,7 @@ const { Server: SocketIO } = require("socket.io");
 const initSocket = require("./socket/socket.js");
 const notificationsRouter = require("./routes/notifications.js");
 const analyticsRouter = require("./routes/analytics.js");
+const chatRouter = require("./routes/chat.js");
 
 const app = express();
 const server = http.createServer(app);
@@ -20,5 +21,6 @@ mongoose.connect("YOUR_MONGO_URI");
 app.use(express.json());
 app.use("/api/notifications", notificationsRouter);
 app.use("/api/dashboard", analyticsRouter);
+app.use("/api/messages", chatRouter);
 
 server.listen(5000, () => console.log("Server running on port 5000"));
