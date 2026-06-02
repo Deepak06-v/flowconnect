@@ -46,12 +46,21 @@ export default function SignupPage() {
         if (!agreedToTerms) return
         setIsLoading(true)
         setError('')
+
         try {
             const data = await registerUser(fullName, email, password)
             saveAuth(data.access_token, data.user)
+            toast.success('Account created successfully!')
             navigate('/dashboard')
-        } catch (err: any) {
-            setError(err.message)
+        } catch (err: unknown) {
+            const message =
+                typeof err === 'string'
+                    ? err
+                    : err instanceof Error
+                    ? err.message
+                    : 'Failed to create account'
+            setError(message)
+            toast.error(message)
         } finally {
             setIsLoading(false)
         }
@@ -200,14 +209,7 @@ export default function SignupPage() {
                         </label>
 
                         {error && (
-                            <div style={{
-                                background: '#fee2e2',
-                                color: '#dc2626',
-                                padding: '10px 14px',
-                                borderRadius: '8px',
-                                fontSize: '13px',
-                                marginBottom: '12px'
-                            }}>
+                            <div className="auth-form__error" role="alert">
                                 {error}
                             </div>
                         )}

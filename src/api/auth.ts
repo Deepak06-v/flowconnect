@@ -13,7 +13,7 @@ export async function loginUser(data: {
   username: string;
   password: string;
 }) {
-  const AUTH_BASE = import.meta.env.VITE_AUTH_API_BASE_URL || "http://localhost:4000";
+  const AUTH_BASE = import.meta.env.VITE_AUTH_API_BASE_URL || "http://localhost:3000";
   const formData = new URLSearchParams();
   formData.append("username", data.username);
   formData.append("password", data.password);
