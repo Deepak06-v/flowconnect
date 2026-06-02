@@ -76,12 +76,6 @@ const features = [
         accent: 'rose',
     },
     {
-
-        icon: Zap,
-        title: 'Workflow Templates',
-        description: 'Launch common Indian business automations in minutes with ready-made workflows for payments, customer alerts, and data syncing.',
-        color: 'amber',
-
         icon: Workflow,
         title: 'Reusable playbooks',
         description: 'Start from templates for common ops flows so teams can launch familiar automations faster.',
@@ -131,11 +125,7 @@ const itemVariants: Variants = {
         opacity: 1,
         y: 0,
         scale: 1,
-
-        transition: { duration: 0.5 },
-
         transition: { duration: 0.5, ease: 'easeOut' as const },
-
     },
 }
 
@@ -173,14 +163,8 @@ export default function Features() {
                         Build customer workflows with <span className="gradient-text">one connected system</span>
                     </h2>
 
-
-                    <p className="section-subtitle">
-                        Connect popular Indian apps and services to build powerful automated workflows in minutes — without coding.
-
                     <p className="features__subtitle">
-                        Choose a category, explore the cards below, and see how Pravah connects communication,
-                        integrations, automation, and analytics into one operating layer.
-
+                        Connect popular Indian apps and services to build powerful automated workflows in minutes — without coding.
                     </p>
                 </motion.div>
 
@@ -205,51 +189,8 @@ export default function Features() {
 
                 <motion.div
                     className="features__grid"
-                    role="list"
                     ref={ref}
                 >
-
-                    {features.map((feature, i) => {
-                        const Icon = feature.icon
-
-                        return (
-                            <motion.div
-                                key={feature.title}
-                                className="features__card glass-card"
-                                role="listitem"
-                                variants={itemVariants}
-                                id={`feature-card-${i}`}
-                                whileHover={{
-                                    y: -6,
-                                    scale: 1.02,
-                                }}
-                                transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-                            >
-                                {/* Icon */}
-                                <motion.div
-                                    className={`features__card-icon features__card-icon--${feature.color}`}
-                                    aria-label={feature.title + " icon"}
-                                    whileHover={{ rotate: 8, scale: 1.1 }}
-                                    transition={{ type: 'spring', stiffness: 250 }}
-                                >
-                                    <Icon size={22} />
-                                </motion.div>
-
-                                {/* Title */}
-                                <h3 className="features__card-title">
-                                    {feature.title}
-                                </h3>
-
-                                {/* Description */}
-                                <p className="features__card-desc">
-                                    {feature.description}
-                                </p>
-
-                                {/* Glow Effect */}
-                                <div className={`features__card-glow features__card-glow--${feature.color}`} />
-                            </motion.div>
-                        )
-                    })}
 
                     <AnimatePresence mode="wait">
                         <motion.div
