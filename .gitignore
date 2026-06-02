@@ -73,3 +73,7 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+
+# User database contains real PII (email addresses) and bcrypt password hashes.
+# Never commit this file. Use users.json.example as a template for local setup.
+flowconnect/auth-backend/users.json

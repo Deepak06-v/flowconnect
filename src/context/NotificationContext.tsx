@@ -2,6 +2,8 @@ import { createContext, useEffect, useState } from "react";
 import { socket } from "../utils/socket";
 import { fetchNotifications } from "../api/notificationApi";
 
+type NotificationPayload = Record<string, unknown>;
+
 export const NotificationContext = createContext<any>(null);
 
 export const NotificationProvider = ({ children }: any) => {
@@ -11,7 +13,7 @@ export const NotificationProvider = ({ children }: any) => {
   useEffect(() => {
     socket.emit("register", userId);
 
-    socket.on("receive_notification", (data) => {
+    socket.on("receive_notification", (data: NotificationPayload) => {
       setNotifications((prev) => [data, ...prev]);
     });
 

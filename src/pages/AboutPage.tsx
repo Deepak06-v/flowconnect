@@ -15,8 +15,6 @@ import {
     Users,
     Zap,
 } from 'lucide-react'
-import Navbar from '../components/common/Navbar'
-import Footer from '../components/common/Footer'
 import '../styles/AboutPage.css'
 
 const milestones = [
@@ -113,9 +111,7 @@ export default function AboutPage() {
     }, [location.hash])
 
     return (
-        <>
-            <Navbar />
-            <main className="about-page">
+        <main className="about-page">
                 <section className="about-hero section">
                     <div className="container">
                         <motion.div
@@ -317,8 +313,6 @@ export default function AboutPage() {
                         </div>
                     </div>
                 </section>
-            </main>
-            <Footer />
-        </>
+        </main>
     )
 }

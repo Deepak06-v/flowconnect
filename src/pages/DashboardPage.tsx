@@ -8,6 +8,7 @@ import {
   ResponsiveContainer, AreaChart, Area
 } from 'recharts'
 import { getDashboardAnalytics, type DashboardAnalytics } from '../api/dashboard'
+import Navbar from '../components/common/Navbar'
 import '../styles/DashboardPage.css'
 
 const COLORS = ['#10b981', '#ef4444']
@@ -47,7 +48,9 @@ function DashboardPage() {
     : 0
 
   return (
-    <div className="dashboard-container">
+    <>
+      <Navbar />
+      <div className="dashboard-container">
       <div className="dashboard-header">
         <div className="dashboard-header__left">
           <Link to="/builder" className="dashboard-header__back">
@@ -162,7 +165,8 @@ function DashboardPage() {
           )}
         </div>
       </div>
-    </div>
+      </div>
+    </>
   )
 }
 

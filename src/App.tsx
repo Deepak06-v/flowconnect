@@ -20,6 +20,7 @@ import ErrorBoundary from './components/common/ErrorBoundary'
 import { ThemeProvider } from './context/ThemeContext'
 import { AuthProvider } from './context/AuthContext'
 import { ScrollButtons } from "./components/common/ScrollButtons";
+import Layout from './components/common/Layout'
 import Solutions from "./pages/Solutions";
 
 
@@ -57,7 +58,7 @@ function AppContent() {
 
       <div id="aria-live-announcer" aria-live="polite" aria-atomic="true" style={{ position: 'absolute', left: '-10000px', width: '1px', height: '1px', overflow: 'hidden' }} />
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<Layout><HomePage /></Layout>} />
 
         {/* Public Routes (Wraps login/signup) */}
         <Route
@@ -116,9 +117,9 @@ function AppContent() {
         />
 
         {/* Open Routes (Anyone can see these) */}
-        <Route path="/pricing" element={<PricingPage />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/how-it-works" element={<HowItWorksPage />} />
+        <Route path="/pricing" element={<Layout><PricingPage /></Layout>} />
+        <Route path="/about" element={<Layout><AboutPage /></Layout>} />
+        <Route path="/how-it-works" element={<Layout><HowItWorksPage /></Layout>} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />

@@ -7,7 +7,42 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const router = express.Router();
 
-router.post("/sms", async (req, res) => {
+// Lightweight in-process rate limiter for the SMS endpoint.
+// Keyed by IP address; allows at most 5 requests per 15 minutes per IP.
+const smsRateLimitStore = new Map();
+const SMS_RATE_LIMIT_MAX = 5;
+const SMS_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
+
+function smsRateLimiter(req, res, next) {
+  const forwarded = req.headers["x-forwarded-for"];
+  const ip = (Array.isArray(forwarded) ? forwarded[0] : String(forwarded || "").split(",")[0])?.trim() || req.ip || "unknown";
+  const now = Date.now();
+  const entry = smsRateLimitStore.get(ip);
+  if (!entry || now - entry.windowStart >= SMS_RATE_LIMIT_WINDOW_MS) {
+    smsRateLimitStore.set(ip, { count: 1, windowStart: now });
+    return next();
+  }
+  if (entry.count >= SMS_RATE_LIMIT_MAX) {
+    return res.status(429).json({ error: "Too many SMS requests. Please wait before trying again." });
+  }
+  entry.count += 1;
+  return next();
+}
+
+// Require a static API key in the Authorization header before accepting
+// any SMS send requests. Without this check any anonymous caller can
+// exhaust the Fast2SMS credit balance by flooding the endpoint.
+function requireApiKey(req, res, next) {
+  const authHeader = req.headers["authorization"] || "";
+  const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
+  const expectedKey = process.env.AUTH_API_KEY || "";
+  if (!expectedKey || token !== expectedKey) {
+    return res.status(401).json({ error: "Authentication required" });
+  }
+  return next();
+}
+
+router.post("/sms", requireApiKey, smsRateLimiter, async (req, res) => {
   const { numbers, message, sender_id } = req.body;
 
   if (!numbers || !message) {
