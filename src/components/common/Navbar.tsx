@@ -132,7 +132,7 @@ export default function Navbar() {
                             key={link.label}
                             to={link.href}
                             className="navbar__link"
-                            onClick={(e) => handleNavClick(e, link.href, link.type)}
+                            onClick={(e: React.MouseEvent<HTMLAnchorElement>) => handleNavClick(e, link.href, link.type)}
                             id={`nav-${link.label.toLowerCase().replace(/\s+/g, '-')}`}
                         >
                             {link.label}
@@ -169,7 +169,7 @@ export default function Navbar() {
                                             <div className="navbar__avatar-fallback">
                                                 {(user?.full_name ?? user?.email ?? 'U')
                                                     .split(' ')
-                                                    .map((word) => word[0] || '')
+                                                    .map((word: string) => word[0] || '')
                                                     .join('')
                                                     .slice(0, 2)
                                                     .toUpperCase()}
@@ -295,7 +295,7 @@ export default function Navbar() {
                                 key={link.label}
                                 to={link.href}
                                 className="navbar__mobile-link"
-                                onClick={(e) => handleNavClick(e, link.href, link.type)}
+                                onClick={(e: React.MouseEvent<HTMLAnchorElement>) => handleNavClick(e, link.href, link.type)}
                             >
                                 {link.label}
                             </Link>

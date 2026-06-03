@@ -2,6 +2,8 @@
    PRAVAH DESIGN SYSTEM
    ========================= */
 :root {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
   /* ================= Colors ================= */
   /* Primary (Orange) */
   --primary-50: #fff7ed;
@@ -29,12 +31,20 @@
   --border-hover: rgba(249,115,22,0.3);
   /* ================= Effects ================= */
   --gradient-primary: linear-gradient(135deg, #f97316, #ea580c);
+  --logo-glow: 0 4px 12px rgba(249, 115, 22, 0.3);
   --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
   --shadow-md: 0 6px 14px rgba(0,0,0,0.06);
   --shadow-lg: 0 20px 40px rgba(0,0,0,0.08);
+  --shadow-xl: 0 28px 60px rgba(0,0,0,0.12);
+  --radius-sm: 10px;
+  --radius-md: 14px;
   --radius-lg: 16px;
+  --radius-xl: 24px;
   --radius-full: 9999px;
   --transition: 0.25s ease;
+  --transition-fast: 0.18s ease;
+  --transition-slow: 0.4s ease;
+  --focus-ring: 0 0 0 3px rgba(249, 115, 22, 0.18);
 }
 /* ================= DARK MODE ================= */
 [data-theme='dark'] {
@@ -50,6 +60,8 @@
   --shadow-sm: 0 2px 6px rgba(0,0,0,0.4);
   --shadow-md: 0 10px 30px rgba(0,0,0,0.5);
   --shadow-lg: 0 25px 60px rgba(0,0,0,0.7);
+  --shadow-xl: 0 32px 70px rgba(0,0,0,0.75);
+  --focus-ring: 0 0 0 3px rgba(251, 146, 60, 0.22);
   color-scheme: dark;
 }
 /* ================= RESET ================= */
@@ -60,8 +72,11 @@
   padding: 0;
   box-sizing: border-box;
 }
+html {
+  scroll-behavior: smooth;
+}
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-sans);
   background:
     radial-gradient(circle at 20% 0%, rgba(249,115,22,0.05), transparent 40%),
     radial-gradient(circle at 80% 20%, rgba(99,102,241,0.04), transparent 50%),
@@ -69,20 +84,45 @@ body {
   color: var(--text-primary);
   min-height: 100vh;
   line-height: 1.6;
+  overflow-x: hidden;
   transition: background var(--transition), color var(--transition);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 a {
   text-decoration: none;
   color: inherit;
 }
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+::selection {
+  background: rgba(249, 115, 22, 0.18);
+  color: var(--text-primary);
+}
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+#root {
+  min-height: 100vh;
+}
 /* ================= LAYOUT ================= */
 .container {
-  max-width: 1280px;
+  max-width: 1240px;
   margin: 0 auto;
   padding: 0 24px;
 }
 .section {
-  padding: 100px 0;
+  padding: 96px 0;
 }
 /* ================= COMPONENTS ================= */
 /* Cards */
@@ -157,6 +197,7 @@ a {
 /* Gradient Text */
 .gradient-text {
   background: var(--gradient-primary);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -403,6 +444,15 @@ a {
 /* active */
 .scroll-buttons button:active {
   transform: scale(0.92);
+}
+.scroll-buttons .divider {
+  width: 1px;
+  height: 24px;
+  align-self: center;
+  margin: -2px 0;
+  background: var(--border-default);
+  border-radius: var(--radius-full);
+  opacity: 0.55;
 }
 /* =========================================================
    AUTH & LEGAL PAGE CONSISTENCY FIX
