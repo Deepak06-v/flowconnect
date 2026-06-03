@@ -25,16 +25,22 @@ export default function LoginPage() {
     const handleEmailLogin = async (e: React.FormEvent) => {
         e.preventDefault()
         setIsLoading(true)
-        // We can remove setError('') because toast handles it cleanly
+        setError('')
 
         try {
             const data = await loginUser(email, password)
             saveAuth(data.access_token, data.user)
-            toast.success("Successfully logged in!") // Add success toast
+            toast.success('Successfully logged in!')
             navigate('/dashboard')
-        } catch (err: any) {
-            setError(err.message) // Optional: keep this if you still want the red box
-            toast.error(err.message || "Failed to log in") // Add error toast
+        } catch (err: unknown) {
+            const message =
+                typeof err === 'string'
+                    ? err
+                    : err instanceof Error
+                    ? err.message
+                    : 'Failed to log in'
+            setError(message)
+            toast.error(message)
         } finally {
             setIsLoading(false)
         }
@@ -130,14 +136,7 @@ export default function LoginPage() {
                         </div>
 
                         {error && (
-                            <div style={{
-                                background: '#fee2e2',
-                                color: '#dc2626',
-                                padding: '10px 14px',
-                                borderRadius: '8px',
-                                fontSize: '13px',
-                                marginBottom: '12px'
-                            }}>
+                            <div className="auth-form__error" role="alert">
                                 {error}
                             </div>
                         )}

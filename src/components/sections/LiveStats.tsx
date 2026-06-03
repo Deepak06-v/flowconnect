@@ -242,7 +242,7 @@ export default function LiveStats() {
   }
 
   const AUTH_BASE =
-    import.meta.env.VITE_AUTH_API_BASE_URL || 'http://localhost:4000'
+    import.meta.env.VITE_AUTH_API_BASE_URL || 'http://localhost:3000'
 
   const fetchStats = useCallback(async (signal?: AbortSignal) => {
     try {

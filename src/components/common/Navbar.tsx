@@ -1,10 +1,16 @@
 
 import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Menu, X, Zap, Sun, Moon, User, ChevronDown } from 'lucide-react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useTheme } from '../../context/ThemeContext'
+import { useAuth } from '../../context/AuthContext'
+
 import { Menu, X, Zap, Sun, Moon, LogOut, Bell, LayoutDashboard, FolderKanban, Settings, UserCircle2 } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useTheme } from '../../context/ThemeContext'
 import { getToken, logout as clearAuth } from '../../api/client'
+
 import './Navbar.css'
 
 type NavLink = {
@@ -34,8 +40,11 @@ const privateNavLinks: NavLink[] = [
 export default function Navbar() {
     const [scrolled, setScrolled] = useState(false)
     const [mobileOpen, setMobileOpen] = useState(false)
+    const [profileOpen, setProfileOpen] = useState(false)
     const mobileMenuRef = useRef<HTMLDivElement | null>(null)
     const { theme, toggleTheme } = useTheme()
+    const { user, logout, isAuthenticated } = useAuth()
+    const navigate = useNavigate()
     const location = useLocation()
     const navigate = useNavigate()
     const [isAuthenticated, setIsAuthenticated] = useState(() => !!getToken())
@@ -141,6 +150,81 @@ export default function Navbar() {
                         >
                             {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
                         </button>
+
+                        <div className="navbar__profile">
+                            {isAuthenticated ? (
+                                <>
+                                    <button
+                                        className="navbar__profile-btn"
+                                        onClick={() => setProfileOpen(!profileOpen)}
+                                        aria-label="Profile menu"
+                                        aria-expanded={profileOpen}
+                                    >
+                                        {user?.avatar ? (
+                                            <img
+                                                src={user.avatar}
+                                                alt={user.full_name || user.email}
+                                                className="navbar__avatar"
+                                            />
+                                        ) : (
+                                            <div className="navbar__avatar-fallback">
+                                                {(user?.full_name ?? user?.email ?? 'U')
+                                                    .split(' ')
+                                                    .map((word) => word[0] || '')
+                                                    .join('')
+                                                    .slice(0, 2)
+                                                    .toUpperCase()}
+                                            </div>
+                                        )}
+                                        <ChevronDown size={16} />
+                                    </button>
+                                    {profileOpen && (
+                                        <div className="navbar__profile-dropdown">
+                                            <Link to="/profile" onClick={() => setProfileOpen(false)}>
+                                                View Profile
+                                            </Link>
+                                            <Link to="/settings" onClick={() => setProfileOpen(false)}>
+                                                Account Settings
+                                            </Link>
+                                            <Link to="/billing" onClick={() => setProfileOpen(false)}>
+                                                Billing
+                                            </Link>
+                                            <Link to="/notifications" onClick={() => setProfileOpen(false)}>
+                                                Notifications
+                                            </Link>
+                                            <Link to="/workspace" onClick={() => setProfileOpen(false)}>
+                                                Workspace Settings
+                                            </Link>
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    logout()
+                                                    setProfileOpen(false)
+                                                    navigate('/login')
+                                                }}
+                                            >
+                                                Sign Out
+                                            </button>
+                                        </div>
+                                    )}
+                                </>
+                            ) : (
+                                location.pathname !== '/login' && location.pathname !== '/signup' && (
+                                    <Link
+                                        to="/login"
+                                        className="navbar__profile-btn navbar__profile-link"
+                                        aria-label="Sign in"
+                                    >
+                                        <User size={18} />
+                                    </Link>
+                                )
+                            )}
+                        </div>
+                        {!isAuthenticated && (
+                            <Link to="/login" className="navbar__link" id="nav-login">
+                                Log In
+                            </Link>
+
                         {isAuthenticated ? (
                             <>
                                 <Link
@@ -189,6 +273,7 @@ export default function Navbar() {
                                     Sign Up
                                 </Link>
                             </>
+
                         )}
                     </div>
                 </div>

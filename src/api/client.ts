@@ -1,7 +1,7 @@
 import { http } from './httpClient'
 import * as authModule from './auth'
 
-const AUTH_BASE = import.meta.env.VITE_AUTH_API_BASE_URL || 'http://localhost:4000'
+const AUTH_BASE = import.meta.env.VITE_AUTH_API_BASE_URL || 'http://localhost:3000'
 
 // Re-export auth functions for backward compatibility
 export const loginUser = (email: string, password: string) =>
