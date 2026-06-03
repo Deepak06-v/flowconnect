@@ -1,15 +1,24 @@
 
-import React, { useState, useEffect, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, Zap, Sun, Moon, User, ChevronDown } from 'lucide-react'
+import React, { useEffect, useRef, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import {
+    Bell,
+    ChevronDown,
+    FolderKanban,
+    LayoutDashboard,
+    LogOut,
+    Menu,
+    Moon,
+    Settings,
+    Sun,
+    User,
+    UserCircle2,
+    X,
+    Zap,
+} from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { useTheme } from '../../context/ThemeContext'
 import { useAuth } from '../../context/AuthContext'
-
-import { Menu, X, Zap, Sun, Moon, LogOut, Bell, LayoutDashboard, FolderKanban, Settings, UserCircle2 } from 'lucide-react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useTheme } from '../../context/ThemeContext'
-import { getToken, logout as clearAuth } from '../../api/client'
 
 import './Navbar.css'
 
@@ -34,7 +43,6 @@ const privateNavLinks: NavLink[] = [
     { label: 'Settings', href: '/profile', type: 'page' },
     { label: 'Notifications', href: '/run-history', type: 'page' },
     { label: 'Solutions', href: '/solutions', type: 'page' },
-
 ]
 
 export default function Navbar() {
@@ -46,8 +54,6 @@ export default function Navbar() {
     const { user, logout, isAuthenticated } = useAuth()
     const navigate = useNavigate()
     const location = useLocation()
-    const navigate = useNavigate()
-    const [isAuthenticated, setIsAuthenticated] = useState(() => !!getToken())
     const isHome = location.pathname === '/'
     const navLinks = isAuthenticated ? privateNavLinks : publicNavLinks
 
@@ -66,15 +72,14 @@ export default function Navbar() {
     }, [mobileOpen])
 
     useEffect(() => {
-        setIsAuthenticated(!!getToken())
         setMobileOpen(false)
+        setProfileOpen(false)
     }, [location.pathname, location.hash])
 
     const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string, type: string) => {
         setMobileOpen(false)
 
         if (type === 'section') {
-            // Extract hash from href (e.g., "/#features" -> "#features")
             const hash = href.substring(href.indexOf('#'))
 
             if (isHome) {
@@ -85,25 +90,22 @@ export default function Navbar() {
                     const elementPosition = element.getBoundingClientRect().top + window.pageYOffset
                     window.scrollTo({
                         top: elementPosition - navHeight,
-                        behavior: 'smooth'
+                        behavior: 'smooth',
                     })
                 }
             }
-            // If not home, normal navigation to /#hash works via Link
         }
-        // Pages (type === 'page') follow normal Link behavior
     }
 
     const handleLogout = () => {
-        clearAuth()
-        setIsAuthenticated(false)
+        logout()
+        setProfileOpen(false)
         setMobileOpen(false)
         navigate('/login', { replace: true })
     }
 
     const getAvatarLabel = () => {
-        const storedUser = JSON.parse(localStorage.getItem('user') || 'null') as { full_name?: string; email?: string } | null
-        const source = storedUser?.full_name || storedUser?.email || 'U'
+        const source = user?.full_name || user?.email || 'U'
         return source.slice(0, 1).toUpperCase()
     }
 
@@ -115,7 +117,6 @@ export default function Navbar() {
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
             <div className="navbar__inner container">
-                {/* Logo */}
                 <Link to="/" className="navbar__logo" id="navbar-logo">
                     <div className="navbar__logo-icon">
                         <Zap size={20} />
@@ -125,14 +126,13 @@ export default function Navbar() {
                     </span>
                 </Link>
 
-                {/* Desktop Nav */}
                 <div className="navbar__links">
                     {navLinks.map((link) => (
                         <Link
                             key={link.label}
                             to={link.href}
                             className="navbar__link"
-                            onClick={(e) => handleNavClick(e, link.href, link.type || 'section')}
+                            onClick={(e) => handleNavClick(e, link.href, link.type)}
                             id={`nav-${link.label.toLowerCase().replace(/\s+/g, '-')}`}
                         >
                             {link.label}
@@ -140,12 +140,11 @@ export default function Navbar() {
                     ))}
                 </div>
 
-                {/* Desktop CTA */}
                 <div className="navbar__actions">
                     <div className="navbar__quick-actions">
-                        <button 
-                            onClick={toggleTheme} 
-                            className="navbar__link navbar__theme-toggle" 
+                        <button
+                            onClick={toggleTheme}
+                            className="navbar__link navbar__theme-toggle"
                             aria-label="Toggle dark mode"
                         >
                             {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
@@ -195,21 +194,15 @@ export default function Navbar() {
                                             <Link to="/workspace" onClick={() => setProfileOpen(false)}>
                                                 Workspace Settings
                                             </Link>
-                                            <button
-                                                type="button"
-                                                onClick={() => {
-                                                    logout()
-                                                    setProfileOpen(false)
-                                                    navigate('/login')
-                                                }}
-                                            >
+                                            <button type="button" onClick={handleLogout}>
                                                 Sign Out
                                             </button>
                                         </div>
                                     )}
                                 </>
                             ) : (
-                                location.pathname !== '/login' && location.pathname !== '/signup' && (
+                                location.pathname !== '/login' &&
+                                location.pathname !== '/signup' && (
                                     <Link
                                         to="/login"
                                         className="navbar__profile-btn navbar__profile-link"
@@ -220,12 +213,18 @@ export default function Navbar() {
                                 )
                             )}
                         </div>
-                        {!isAuthenticated && (
-                            <Link to="/login" className="navbar__link" id="nav-login">
-                                Log In
-                            </Link>
 
-                        {isAuthenticated ? (
+                        {!isAuthenticated ? (
+                            <>
+                                <Link to="/login" className="navbar__link" id="nav-login">
+                                    Login
+                                </Link>
+                                <Link to="/signup" className="btn-primary navbar__cta" id="nav-get-started">
+                                    <Zap size={16} />
+                                    Sign Up
+                                </Link>
+                            </>
+                        ) : (
                             <>
                                 <Link
                                     to="/profile"
@@ -265,20 +264,10 @@ export default function Navbar() {
                                     Logout
                                 </button>
                             </>
-                        ) : (
-                            <>
-                                <Link to="/login" className="navbar__link" id="nav-login">Login</Link>
-                                <Link to="/signup" className="btn-primary navbar__cta" id="nav-get-started">
-                                    <Zap size={16} />
-                                    Sign Up
-                                </Link>
-                            </>
-
                         )}
                     </div>
                 </div>
 
-                {/* Mobile Toggle */}
                 <button
                     className="navbar__toggle"
                     onClick={() => setMobileOpen(!mobileOpen)}
@@ -289,7 +278,6 @@ export default function Navbar() {
                 </button>
             </div>
 
-            {/* Mobile Menu */}
             <AnimatePresence>
                 {mobileOpen && (
                     <motion.div
@@ -307,7 +295,7 @@ export default function Navbar() {
                                 key={link.label}
                                 to={link.href}
                                 className="navbar__mobile-link"
-                                onClick={(e) => handleNavClick(e, link.href, link.type || 'section')}
+                                onClick={(e) => handleNavClick(e, link.href, link.type)}
                             >
                                 {link.label}
                             </Link>
@@ -323,19 +311,35 @@ export default function Navbar() {
                             </button>
                             {isAuthenticated ? (
                                 <>
-                                    <Link to="/dashboard" className="btn-secondary navbar__full-width" onClick={() => setMobileOpen(false)}>
+                                    <Link
+                                        to="/dashboard"
+                                        className="btn-secondary navbar__full-width"
+                                        onClick={() => setMobileOpen(false)}
+                                    >
                                         <LayoutDashboard size={16} />
                                         Dashboard
                                     </Link>
-                                    <Link to="/builder" className="btn-secondary navbar__full-width" onClick={() => setMobileOpen(false)}>
+                                    <Link
+                                        to="/builder"
+                                        className="btn-secondary navbar__full-width"
+                                        onClick={() => setMobileOpen(false)}
+                                    >
                                         <FolderKanban size={16} />
                                         Workspace
                                     </Link>
-                                    <Link to="/profile" className="btn-secondary navbar__full-width" onClick={() => setMobileOpen(false)}>
+                                    <Link
+                                        to="/profile"
+                                        className="btn-secondary navbar__full-width"
+                                        onClick={() => setMobileOpen(false)}
+                                    >
                                         <Settings size={16} />
                                         Settings
                                     </Link>
-                                    <Link to="/run-history" className="btn-secondary navbar__full-width" onClick={() => setMobileOpen(false)}>
+                                    <Link
+                                        to="/run-history"
+                                        className="btn-secondary navbar__full-width"
+                                        onClick={() => setMobileOpen(false)}
+                                    >
                                         <Bell size={16} />
                                         Notifications
                                     </Link>
@@ -346,8 +350,18 @@ export default function Navbar() {
                                 </>
                             ) : (
                                 <>
-                                    <Link to="/login" className="btn-secondary navbar__full-width" onClick={() => setMobileOpen(false)}>Login</Link>
-                                    <Link to="/signup" className="btn-primary navbar__full-width" onClick={() => setMobileOpen(false)}>
+                                    <Link
+                                        to="/login"
+                                        className="btn-secondary navbar__full-width"
+                                        onClick={() => setMobileOpen(false)}
+                                    >
+                                        Login
+                                    </Link>
+                                    <Link
+                                        to="/signup"
+                                        className="btn-primary navbar__full-width"
+                                        onClick={() => setMobileOpen(false)}
+                                    >
                                         <Zap size={16} />
                                         Sign Up
                                     </Link>
