@@ -1,28 +1,40 @@
 import { http } from './httpClient'
 
-const NOTION_API_KEY = import.meta.env.VITE_NOTION_API_KEY
-const BASE_URL = 'https://api.notion.com/v1'
+// SECURITY FIX: Never expose API keys in frontend code. All Notion API
+// calls are now proxied through the backend, which holds the actual
+// NOTION_API_KEY securely in environment variables that are never sent
+// to the client. This prevents credential leakage in source maps, DevTools,
+// or network inspection.
+
+const BACKEND_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+const NOTION_PROXY_BASE = `${BACKEND_BASE}/api/integrations/notion`
 
 async function notionRequest(
   method: string,
   endpoint: string,
   body?: object
 ) {
-  const url = `${BASE_URL}/${endpoint}`
+  // All requests go through the backend proxy endpoint, which handles
+  // Notion authentication securely with the API key stored server-side.
+  const proxyEndpoint = `${NOTION_PROXY_BASE}/proxy`
   const options: any = {
     headers: {
-      Authorization: `Bearer ${NOTION_API_KEY}`,
-      'Notion-Version': '2024-10-08', // Use latest Notion API version
+      'X-Notion-Endpoint': endpoint,
+      'X-Notion-Method': method,
     },
-    skipAuth: true, // Notion has its own auth
   }
 
-  if (method === 'GET') {
-    return http.get(url, options)
-  } else if (method === 'POST') {
-    return http.post(url, body, options)
-  } else if (method === 'PATCH') {
-    return http.put(url, body, options)
+  try {
+    if (method === 'GET') {
+      return http.get(proxyEndpoint, { ...options, params: { endpoint } })
+    } else if (method === 'POST') {
+      return http.post(proxyEndpoint, { endpoint, body }, options)
+    } else if (method === 'PATCH') {
+      return http.put(proxyEndpoint, { endpoint, body }, options)
+    }
+  } catch (error) {
+    console.error('Notion proxy request failed:', error)
+    throw error
   }
 }
 
