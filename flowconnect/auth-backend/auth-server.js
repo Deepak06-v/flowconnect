@@ -6,7 +6,8 @@ import jwt from "jsonwebtoken";
 import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
-import { randomUUID } from "crypto";
+import { randomUUID, randomBytes } from "crypto";
+import nodemailer from "nodemailer";
 import {
   workflowQueue,
   deadLetterQueue,
@@ -17,7 +18,7 @@ import {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const PORT = Number(process.env.AUTH_PORT || 3000);
+const PORT = Number(process.env.AUTH_PORT || 4000);
 if (!process.env.JWT_SECRET) {
   if (process.env.NODE_ENV === "production") {
     console.error(
@@ -33,6 +34,7 @@ if (!process.env.JWT_SECRET) {
   );
 }
 const JWT_SECRET = process.env.JWT_SECRET || "dev-secret-local-only-do-not-deploy";
+const RESET_TOKEN_TTL_MINUTES = Number(process.env.RESET_TOKEN_TTL_MINUTES || 30);
 const USERS_FILE = path.resolve(
   process.cwd(),
   process.env.AUTH_USERS_FILE || "flowconnect/auth-backend/users.json"
@@ -594,6 +596,45 @@ function sanitizeUser(user) {
   };
 }
 
+function createResetToken() {
+  return randomBytes(32).toString("hex");
+}
+
+function getResetExpiry() {
+  return new Date(Date.now() + RESET_TOKEN_TTL_MINUTES * 60 * 1000).toISOString();
+}
+
+async function sendPasswordResetEmail(email, resetLink) {
+  const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT || 587),
+    secure: String(process.env.SMTP_SECURE || "false").toLowerCase() === "true",
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+
+  if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    console.warn("SMTP email settings are not configured. Password reset email was not sent.");
+    console.info("Reset link:", resetLink);
+    return;
+  }
+
+  await transporter.sendMail({
+    from: process.env.SMTP_FROM || process.env.SMTP_USER,
+    to: email,
+    subject: "Reset your Pravah password",
+    html: `
+      <p>Hello,</p>
+      <p>We received a request to reset your Pravah password.</p>
+      <p><a href="${resetLink}">Click here to reset your password</a></p>
+      <p>This link will expire in ${RESET_TOKEN_TTL_MINUTES} minutes.</p>
+      <p>If you did not request this change, you can safely ignore this email.</p>
+    `,
+  });
+}
+
 function inferAppNames(workflow) {
   const apps = new Set();
   const parts = [workflow.trigger, ...(workflow.actions || []).map((action) => action.type)];
@@ -798,6 +839,87 @@ app.post("/api/auth/login", loginRateLimiter, async (req, res) => {
     token_type: "bearer",
     user: sanitizeUser(user),
   });
+});
+
+app.post("/api/auth/forgot-password", async (req, res) => {
+  const email = String(req.body.email || "").trim().toLowerCase();
+
+  if (!email) {
+    return res.status(400).json({ detail: "Email is required" });
+  }
+
+  const users = await readUsers();
+  const user = users.find((item) => item.email === email);
+
+  if (!user) {
+    return res.status(404).json({ detail: "No account found for that email" });
+  }
+
+  const token = createResetToken();
+  const resetExpiresAt = getResetExpiry();
+
+  const nextUsers = users.map((item) =>
+    item.id === user.id
+      ? {
+          ...item,
+          password_reset_token: token,
+          password_reset_expires_at: resetExpiresAt,
+        }
+      : item
+  );
+
+  await writeUsers(nextUsers);
+
+  const resetLink = `${process.env.FRONTEND_URL || "http://localhost:5173"}/reset-password?token=${token}`;
+
+  try {
+    await sendPasswordResetEmail(user.email, resetLink);
+  } catch (error) {
+    console.error("Failed to send password reset email:", error);
+    return res.status(500).json({ detail: "Unable to send password reset email" });
+  }
+
+  return res.json({ ok: true, message: "Password reset email sent" });
+});
+
+app.post("/api/auth/reset-password", async (req, res) => {
+  const token = String(req.body.token || "").trim();
+  const password = String(req.body.password || "");
+
+  if (!token || !password) {
+    return res.status(400).json({ detail: "Token and password are required" });
+  }
+
+  if (password.length < 6) {
+    return res.status(400).json({ detail: "Password must be at least 6 characters" });
+  }
+
+  const users = await readUsers();
+  const user = users.find((item) => item.password_reset_token === token);
+
+  if (!user) {
+    return res.status(400).json({ detail: "Invalid or expired reset token" });
+  }
+
+  if (!user.password_reset_expires_at || new Date(user.password_reset_expires_at) <= new Date()) {
+    return res.status(400).json({ detail: "Invalid or expired reset token" });
+  }
+
+  const password_hash = await bcrypt.hash(password, 10);
+  const nextUsers = users.map((item) =>
+    item.id === user.id
+      ? {
+          ...item,
+          password_hash,
+          password_reset_token: undefined,
+          password_reset_expires_at: undefined,
+        }
+      : item
+  );
+
+  await writeUsers(nextUsers);
+
+  return res.json({ ok: true, message: "Password reset successful" });
 });
 
 app.get("/api/auth/me", authMiddleware, (req, res) => {
