@@ -78,6 +78,10 @@
 .navbar__quick-actions {
     align-items: center;
 }
+
+.navbar__actions {
+    justify-content: flex-end;
+}
 .navbar__links,
 .navbar__actions {
     display: none;
@@ -103,7 +107,9 @@
 .navbar__quick-actions {
     display: flex;
     flex: 0 0 auto;
-    gap: 4px;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
 }
 
 .navbar__theme-toggle {
@@ -135,14 +141,20 @@
     font-size: 14px;
     border: none;
     white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
 .navbar__toggle {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex: 0 0 auto;
     width: 40px;
     height: 40px;
+    margin-left: 8px;
     color: var(--text-secondary);
     border-radius: var(--radius-md);
 }
@@ -179,8 +191,9 @@
         grid-column: 3;
         justify-content: flex-end;
         justify-self: end;
+        align-items: center;
         flex: 0 0 auto;
-        gap: 12px;
+        gap: 10px;
         min-width: max-content;
     }
 
